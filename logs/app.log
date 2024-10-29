@@ -396,3 +396,4 @@ Caused by: org.hibernate.HibernateException: Access to DialectResolutionInfo can
 2024-10-29 21:02:32 INFO  t.e.d.DevOps_ProjectSpringBootApplication - Started DevOps_ProjectSpringBootApplication in 4.904 seconds (JVM running for 5.648)
 2024-10-29 21:02:32 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2024-10-29 21:02:32 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-10-29 21:02:32 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
