@@ -6,6 +6,7 @@ services:
     build:
       context: .                      # Set the build context to the current directory
       dockerfile: Dockerfile          # Specify the Dockerfile name (default is Dockerfile)
+    image: amenidrira/spring_app
     ports:
       - "8086:8086"                   # Map container port to host port
     environment:
