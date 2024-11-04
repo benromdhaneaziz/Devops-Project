@@ -1,57 +1,84 @@
 version: '3.8'
 
 services:
-  # Spring Boot Application Service
   spring-app:
     build:
-      context: .                      # Set the build context to the current directory
-      dockerfile: Dockerfile          # Specify the Dockerfile name (default is Dockerfile)
+      context: .                      # Contexte de construction du Dockerfile
+      dockerfile: Dockerfile          # Nom du Dockerfile
     image: amenidrira/spring_app
     ports:
-      - "8086:8086"                   # Map container port to host port
+      - "8086:8086"                   # Mapping du port pour l'application
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/devops?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ""   # Set your MySQL password here
+      SPRING_DATASOURCE_PASSWORD: ""   # Mot de passe MySQL
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
-      SERVER_PORT: 8086                # Specify server port
+      SERVER_PORT: 8086                # Port du serveur
     depends_on:
-      - mysql                          # Ensures MySQL starts before Spring Boot app
+      - mysql                          # Démarrer MySQL avant Spring Boot
     networks:
       - app-network
     logging:
-      driver: "json-file"             # Use json-file logging driver
+      driver: "json-file"
       options:
-        max-size: "10m"                # Maximum size of the log file
-        max-file: "3"                   # Keep 3 rotated log files
-        mode: "non-blocking"            # Prevent blocking writes
+        max-size: "10m"
+        max-file: "3"
 
-  # MySQL Database Service
   mysql:
-    image: mysql:8.0                  # Use the desired MySQL version
+    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ""          # Set your MySQL root password
-      MYSQL_DATABASE: devops           # Database name
-      MYSQL_USER: root                 # User name as per application.properties
-      MYSQL_PASSWORD: ""                # Password for the MySQL user (set to "" if none)
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: devops
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
     ports:
-      - "3306:3306"                    # Expose MySQL to host if needed
+      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql      # Persist MySQL data
+      - mysql-data:/var/lib/mysql
     networks:
       - app-network
     logging:
-      driver: "json-file"             # Use json-file logging driver
+      driver: "json-file"
       options:
-        max-size: "10m"                # Maximum size of the log file
-        max-file: "3"                   # Keep 3 rotated log files
-        mode: "non-blocking"            # Prevent blocking writes
+        max-size: "10m"
+        max-file: "3"
 
-# Define volumes for data persistence
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Fichier de configuration pour Prometheus
+    networks:
+      - app-network
+    depends_on:
+      - spring-app  # Démarrer Prometheus après l'application Spring Boot
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - app-network
+    depends_on:
+      - prometheus   # Démarrer Grafana après Prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   mysql-data:
+  grafana-storage:
 
-# Define a shared network for communication between services
 networks:
   app-network:
