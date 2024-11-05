@@ -5,3 +5,7 @@ scrape_configs:
   - job_name: 'spring-app'
     static_configs:
       - targets: ['spring-app:8086']  # Remplacez ce port si l'application utilise un autre port
+
+  - job_name: 'jenkins'  # New target for Jenkins
+    static_configs:
+      - targets: ['172.17.0.1:8080']  # Add this line
